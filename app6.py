@@ -106,28 +106,26 @@ uploaded_file = st.file_uploader(
 # ===============================
 if uploaded_file:
 
-    # 1️⃣ LOAD RAW CSV
+    # 1 LOAD RAW CSV
     raw_df = pd.read_csv(uploaded_file)
 
-    # 2️⃣ CLEAN USING data_cleaning.py
+    # 2️ CLEAN USING data_cleaning.py
     try:
         df = clean_single_airdata_df(raw_df)
     except Exception as e:
         st.error(f"Data cleaning failed: {e}")
         st.stop()
 
-    # 3️⃣ STANDARDIZE DATE FOR TIME SERIES
+    # 3️ STANDARDIZE DATE FOR TIME SERIES
     df.rename(columns={"from_date": "date"}, inplace=True)
     df.set_index("date", inplace=True)
     df = df.sort_index()
 
-    # 4️⃣ CREATE LAG & ROLLING FEATURES
+    # 4️ CREATE LAG & ROLLING FEATURES
     df = create_lag_features(df)
     df.dropna(inplace=True)
 
-    # ===============================
-    # PREVIEW
-    # ===============================
+    
     st.subheader("Cleaned Data Preview")
     st.dataframe(df.tail())
 
